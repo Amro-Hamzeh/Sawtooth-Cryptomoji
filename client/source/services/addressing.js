@@ -26,6 +26,14 @@ const PREFIXES = {
  */
 export const getCollectionAddress = (publicKey = null) => {
   // Enter your solution here
+  if(publicKey===null)
+  {
+  	return NAMESPACE+PREFIXES.COLLECTION;
+  }
+  else
+  {
+  	return NAMESPACE+PREFIXES.COLLECTION+createHash('sha512').update(publicKey).digest('hex').slice(0,62);
+  }
 
 };
 
@@ -43,6 +51,18 @@ export const getCollectionAddress = (publicKey = null) => {
  */
 export const getMojiAddress = (ownerKey = null, dna = null) => {
   // Your code here
+  if(ownerKey===null && dna===null)
+  {
+  	return NAMESPACE+PREFIXES.MOJI;
+  }
+  else if(dna===null && ownerKey!==null)
+  {
+  	return NAMESPACE+PREFIXES.MOJI+createHash('sha512').update(ownerKey).digest('hex').slice(0,8);
+  }
+  else
+  {
+  	return NAMESPACE+PREFIXES.MOJI+createHash('sha512').update(ownerKey).digest('hex').slice(0,8)+createHash('sha512').update(dna).digest('hex').slice(0,54);
+  }
 
 };
 
@@ -55,6 +75,14 @@ export const getMojiAddress = (ownerKey = null, dna = null) => {
  */
 export const getSireAddress = (ownerKey = null) => {
   // Your code here
+  if(ownerKey===null)
+  {
+  	return NAMESPACE+PREFIXES.SIRE_LISTING;
+  }
+  else
+  {
+  	return NAMESPACE+PREFIXES.SIRE_LISTING+createHash('sha512').update(ownerKey).digest('hex').slice(0,62);
+  }
 
 };
 

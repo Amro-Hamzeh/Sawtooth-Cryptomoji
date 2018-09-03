@@ -14,9 +14,35 @@
  *   Remember that all transactions and blocks must be generated
  *   deterministically! JSON is convenient, but you will need to sort
  *   your object's keys or random transactions may fail.
+
+
  */
+
+ var flattenObject = function(ob) {
+    var toReturn = {};
+
+    for (var i in ob) {
+        if (!ob.hasOwnProperty(i)) continue;
+
+        if ((typeof ob[i]) == 'object') {
+            var flatObject = flattenObject(ob[i]);
+            for (var x in flatObject) {
+                if (!flatObject.hasOwnProperty(x)) continue;
+
+                toReturn[i + '.' + x] = flatObject[x];
+            }
+        } else {
+            toReturn[i] = ob[i];
+        }
+    }
+    return toReturn;
+};
 const encode = object => {
   // Enter your solution here
+
+  const sortedKeys= Object.keys(flattenObject(object)).sort();
+const json=JSON.stringify(object,sortedKeys);
+return Buffer.from(json);
 
 };
 
@@ -26,7 +52,7 @@ const encode = object => {
  */
 const decode = buffer => {
   // Your code here
-
+ return JSON.parse(buffer);
 };
 
 module.exports = {

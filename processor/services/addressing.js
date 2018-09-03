@@ -25,7 +25,9 @@ const PREFIXES = {
  */
 const getCollectionAddress = publicKey => {
   // Enter your solution here
-
+ 
+    return NAMESPACE+PREFIXES.COLLECTION+createHash('sha512').update(publicKey).digest('hex').slice(0,62);
+  
 };
 
 /**
@@ -34,7 +36,9 @@ const getCollectionAddress = publicKey => {
  */
 const getMojiAddress = (ownerKey, dna) => {
   // Your code here
-
+ 
+    return NAMESPACE+PREFIXES.MOJI+createHash('sha512').update(ownerKey).digest('hex').slice(0,8)+createHash('sha512').update(dna).digest('hex').slice(0,54);
+  
 };
 
 /**
@@ -44,6 +48,8 @@ const getMojiAddress = (ownerKey, dna) => {
 const getSireAddress = ownerKey => {
   // Your code here
 
+    return NAMESPACE+PREFIXES.SIRE_LISTING+createHash('sha512').update(ownerKey).digest('hex').slice(0,62);
+  
 };
 
 /**
@@ -76,6 +82,14 @@ const getOfferAddress = (ownerKey, addresses) => {
  */
 const isValidAddress = address => {
   // Your code here
+  //const str= address.slice(0,6);
+  const regexp = /^[0-9a-fA-F]+$/;
+  console.log(typeof address);
+if(typeof address==="string" && address.length===70 && address.slice(0,6)===NAMESPACE && regexp.test(address))
+{regexp.lastIndex=0;
+  return true;
+}
+else return false;
 
 };
 

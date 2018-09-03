@@ -29,7 +29,13 @@ const NAMESPACE = '5f4d76';
  */
 export const createTransaction = (privateKey, payload) => {
   // Enter your solution here
-
+  const encodedPayload=encode(payload);
+  const header=TransactionHeader.encode({payload}).finish();
+  return Transaction.create({
+   header: header,
+    headerSignature: sign(privateKey,header),
+    payload: encodedPayload
+ });
 };
 
 /**

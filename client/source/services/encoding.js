@@ -13,9 +13,32 @@
  *   deterministically! JSON is convenient, but you will need to sort
  *   your object's keys or random transactions may fail.
  */
+
+ var flattenObject = function(ob) {
+    var toReturn = {};
+
+    for (var i in ob) {
+        if (!ob.hasOwnProperty(i)) continue;
+
+        if ((typeof ob[i]) == 'object') {
+            var flatObject = flattenObject(ob[i]);
+            for (var x in flatObject) {
+                if (!flatObject.hasOwnProperty(x)) continue;
+
+                toReturn[i + '.' + x] = flatObject[x];
+            }
+        } else {
+            toReturn[i] = ob[i];
+        }
+    }
+    return toReturn;
+};
 export const encode = object => {
   // Enter your solution here
-
+ 
+const sortedKeys= Object.keys(flattenObject(object)).sort();
+const json=JSON.stringify(object,sortedKeys);
+return Buffer.from(json);
 };
 
 /**
@@ -29,5 +52,6 @@ export const encode = object => {
  */
 export const decode = base64Str => {
   // Your code here
+  return JSON.parse(Buffer.from(base64Str,'base64').toString());
 
 };
