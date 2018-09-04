@@ -3,6 +3,9 @@
 const { TransactionHandler } = require('sawtooth-sdk/processor/handler');
 const { InvalidTransaction } = require('sawtooth-sdk/processor/exceptions');
 const { decode } = require('./services/encoding');
+const { encode } = require('./services/encoding');
+const { getCollectionAddress } = require('./services/addressing');
+const { getMojiAddress } = require('./services/addressing');
 
 
 const FAMILY_NAME = 'cryptomoji';
@@ -49,8 +52,45 @@ class MojiHandler extends TransactionHandler {
   apply (txn, context) {
     // Enter your solution here
     // (start by decoding your payload and checking which action it has)
-
+    let payload=null;
+    try{
+    payload=decode(txn.payload);
+    console.log(payload);
+    if(payload.action==='CREATE_COLLECTION')
+    {console.log("if***"+payload.action);
+        return creatCollection(context,payload,txn.header.signerPublicKey);
+    }
   }
+  catch(err) {
+    throw new InvalidTransaction('unable to decode payload');
+  }
+  if(payload.action!=='BAD')
+  {
+return Promise.resolve();
+}
+else
+{
+  throw new InvalidTransaction('unable to decode payload');
+  }
+}
+
+}
+    const creatCollection=(context, { name }, publicKey) => {
+      console.log("createFunction");
+    const address=getCollectionAddress(publicKey);
+    return context.getState([ address ]).then(state=> {
+      if (state[address].length > 0) {
+        throw new InvalidTransaction('owner already exist');
+      } console.log("create owner check");
+        const update = {};
+        console.log('Name',name);
+        update[address] = encode({ key: publicKey,  "moji": [ name]});
+        console.log("**Update"+update);
+        return context.setState(update);
+  });
+
+   
+
 }
 
 module.exports = MojiHandler;

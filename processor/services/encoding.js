@@ -18,31 +18,32 @@
 
  */
 
- var flattenObject = function(ob) {
-    var toReturn = {};
-
-    for (var i in ob) {
-        if (!ob.hasOwnProperty(i)) continue;
-
-        if ((typeof ob[i]) == 'object') {
-            var flatObject = flattenObject(ob[i]);
-            for (var x in flatObject) {
-                if (!flatObject.hasOwnProperty(x)) continue;
-
-                toReturn[i + '.' + x] = flatObject[x];
-            }
-        } else {
-            toReturn[i] = ob[i];
-        }
-    }
-    return toReturn;
+ const concatMap = (array, iterator) => {
+  return array.reduce((mapped, item) => {
+    return mapped.concat(iterator(item));
+  }, []);
 };
+
+// Recursively fetches all of the keys in nested objects
+const listKeys = object => {
+  if (!object || typeof object !== 'object') {
+    return [];
+  }
+
+  if (Array.isArray(object)) {
+    return concatMap(object, item => listKeys(item));
+  }
+
+  const topKeys = Object.keys(object);
+  const nestedKeys = concatMap(topKeys, key => listKeys(object[key]));
+  return topKeys.concat(nestedKeys);
+};
+
 const encode = object => {
   // Enter your solution here
 
-  const sortedKeys= Object.keys(flattenObject(object)).sort();
-const json=JSON.stringify(object,sortedKeys);
-return Buffer.from(json);
+  const sortedKeys = listKeys(object).sort();
+  return Buffer.from(JSON.stringify(object, sortedKeys));
 
 };
 
