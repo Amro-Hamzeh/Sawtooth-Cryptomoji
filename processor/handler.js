@@ -22,7 +22,6 @@ class MojiHandler extends TransactionHandler {
    * expects to handle. We'll fill this one in for you.
    */
   constructor () {
-    console.log('Initializing cryptomoji handler with namespace:', NAMESPACE);
     super(FAMILY_NAME, [ FAMILY_VERSION ], [ NAMESPACE ]);
   }
 
@@ -53,12 +52,12 @@ class MojiHandler extends TransactionHandler {
     // Enter your solution here
     // (start by decoding your payload and checking which action it has)
     let payload=null;
+    console.log("apply test");
     try{
     payload=decode(txn.payload);
-    console.log(payload);
     if(payload.action==='CREATE_COLLECTION')
-    {console.log("if***"+payload.action);
-        return creatCollection(context,payload,txn.header.signerPublicKey);
+    {
+        return createCollection(context,payload,txn.header.signerPublicKey);
     }
   }
   catch(err) {
@@ -75,17 +74,15 @@ else
 }
 
 }
-    const creatCollection=(context, { name }, publicKey) => {
-      console.log("createFunction");
+    const createCollection=(context, { name }, publicKey) => {
+    
     const address=getCollectionAddress(publicKey);
     return context.getState([ address ]).then(state=> {
       if (state[address].length > 0) {
         throw new InvalidTransaction('owner already exist');
-      } console.log("create owner check");
+      }
         const update = {};
-        console.log('Name',name);
-        update[address] = encode({ key: publicKey,  "moji": [ name]});
-        console.log("**Update"+update);
+        update[address] = encode({ key: publicKey,  "moji": [name]});
         return context.setState(update);
   });
 
